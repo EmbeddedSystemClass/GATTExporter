@@ -5,8 +5,6 @@ import (
 	"github.com/paypal/gatt/examples/option"
 	"encoding/json"
 	"github.com/iris-contrib/errors"
-	"fmt"
-	"time"
 )
 
 type bledevice struct{
