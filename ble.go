@@ -5,6 +5,7 @@ import (
 	"github.com/paypal/gatt/examples/option"
 	"encoding/json"
 	"github.com/iris-contrib/errors"
+	"fmt"
 )
 
 type bledevice struct{
@@ -106,14 +107,14 @@ func onPeriphConnected(p gatt.Peripheral, err error) {
 	Exporter.writer.WriteString("Connected")
 
 	if err := p.SetMTU(500); err != nil {
-		Exporter.writer.WriteString("Failed to set MTU, err: %s\n", err)
+		Exporter.writer.WriteString(fmt.Sprintf("Failed to set MTU, err: %s\n", err))
 	}
 
 	// Discovery services
 	ss, err := p.DiscoverServices(nil)
 
 	if err != nil {
-		Exporter.writer.WriteString("Failed to discover services, err: %s\n", err)
+		Exporter.writer.WriteString(fmt.Sprintf("Failed to discover services, err: %s\n", err))
 		return
 	}
 
@@ -127,7 +128,7 @@ func onPeriphConnected(p gatt.Peripheral, err error) {
 		// Discovery characteristics
 		cs, err := p.DiscoverCharacteristics(nil, s)
 		if err != nil {
-			Exporter.writer.WriteString("Failed to discover characteristics, err: %s\n", err)
+			Exporter.writer.WriteString(fmt.Sprintf("Failed to discover characteristics, err: %s\n", err))
 			continue
 		}
 
@@ -143,16 +144,16 @@ func onPeriphConnected(p gatt.Peripheral, err error) {
 			if (c.Properties() & gatt.CharRead) != 0 {
 				b, err := p.ReadCharacteristic(c)
 				if err != nil {
-					Exporter.writer.WriteString("Failed to read characteristic, err: %s\n", err)
+					Exporter.writer.WriteString(fmt.Sprintf("Failed to read characteristic, err: %s\n", err))
 					continue
 				}
-				Exporter.writer.WriteString("    value         %x | %q\n", b, b)
+				Exporter.writer.WriteString(fmt.Sprintf("    value         %x | %q\n", b, b))
 			}
 
 			// Discovery descriptors
 			ds, err := p.DiscoverDescriptors(nil, c)
 			if err != nil {
-				Exporter.writer.WriteString("Failed to discover descriptors, err: %s\n", err)
+				Exporter.writer.WriteString(fmt.Sprintf("Failed to discover descriptors, err: %s\n", err))
 				continue
 			}
 
@@ -166,10 +167,10 @@ func onPeriphConnected(p gatt.Peripheral, err error) {
 				// Read descriptor (could fail, if it's not readable)
 				b, err := p.ReadDescriptor(d)
 				if err != nil {
-					Exporter.writer.WriteString("Failed to read descriptor, err: %s\n", err)
+					Exporter.writer.WriteString(fmt.Sprintf("Failed to read descriptor, err: %s\n", err))
 					continue
 				}
-				Exporter.writer.WriteString("    value         %x | %q\n", b, b)
+				Exporter.writer.WriteString(fmt.Sprintf("    value         %x | %q\n", b, b))
 			}
 
 			// Subscribe the characteristic, if possible.
@@ -184,7 +185,7 @@ func onPeriphConnected(p gatt.Peripheral, err error) {
 					}
 				}
 				if err := p.SetNotifyValue(c, f); err != nil {
-					Exporter.writer.WriteString("Failed to subscribe characteristic, err: %s\n", err)
+					Exporter.writer.WriteString(fmt.Sprintf("Failed to subscribe characteristic, err: %s\n", err))
 					continue
 				}
 			}
